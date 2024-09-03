@@ -66,7 +66,7 @@ class Model
             $expectedType = $this->types[$property];
             $actualType = gettype($value);
 
-            if ($expectedType !== $actualType) {
+            if ($actualType !== 'NULL' && $expectedType !== $actualType) {
                 throw new Exception("Type mismatch for property $property. Expected $expectedType, got $actualType.");
             }
 
