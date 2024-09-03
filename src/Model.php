@@ -66,7 +66,7 @@ class Model
             $expectedType = $this->types[$property];
             $actualType = gettype($value);
 
-            if (!$this->isValidType($expectedType, $actualType)) {
+            if ($expectedType === $actualType) {
                 throw new Exception("Type mismatch for property $property. Expected $expectedType, got $actualType.");
             }
 
@@ -124,27 +124,5 @@ class Model
             return $this->types[$property];
         }
         throw new Exception("Property $property does not exist.");
-    }
-
-    /**
-     * Check if the actual type of the value matches the expected type
-     *
-     * @param string $expectedType
-     * @param string $actualType
-     * @return bool
-     */
-    private function isValidType(string $expectedType, string $actualType): bool
-    {
-        $typeMap = [
-            'int' => 'integer',
-            'float' => 'double',
-            'string' => 'string',
-            'bool' => 'boolean',
-            'array' => 'array',
-            'object' => 'object',
-            'null' => 'NULL'
-        ];
-
-        return isset($typeMap[$expectedType]) && $typeMap[$expectedType] === $actualType;
     }
 }
