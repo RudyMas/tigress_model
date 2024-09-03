@@ -17,10 +17,13 @@ use Exception;
 class Model
 {
     /**
+     * Array of all the properties of the model (data)
      * @var array
      */
     private array $properties = [];
+
     /**
+     * Array of all the types of the properties of the model
      * @var array
      */
     private array $types = [];
@@ -79,6 +82,26 @@ class Model
             return $this->properties[$property];
         }
         throw new Exception("Property $property does not exist.");
+    }
+
+    /**
+     * Get the properties
+     *
+     * @return array
+     */
+    public function getProperties(): array
+    {
+        return $this->properties;
+    }
+
+    /**
+     * Get the types of the properties
+     *
+     * @return array
+     */
+    public function getTypes(): array
+    {
+        return $this->types;
     }
 
     /**
