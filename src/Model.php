@@ -63,6 +63,13 @@ class Model
     public function __set(string $property, mixed $value): void
     {
         if (array_key_exists($property, $this->properties)) {
+            $expectedType = $this->types[$property];
+            $actualType = gettype($value);
+
+            if (!$this->isValidType($expectedType, $actualType)) {
+                throw new Exception("Type mismatch for property $property. Expected $expectedType, got $actualType.");
+            }
+
             $this->properties[$property] = $value;
         } else {
             throw new Exception("Property $property does not exist.");
@@ -117,5 +124,27 @@ class Model
             return $this->types[$property];
         }
         throw new Exception("Property $property does not exist.");
+    }
+
+    /**
+     * Check if the actual type of the value matches the expected type
+     *
+     * @param string $expectedType
+     * @param string $actualType
+     * @return bool
+     */
+    private function isValidType(string $expectedType, string $actualType): bool
+    {
+        $typeMap = [
+            'int' => 'integer',
+            'float' => 'double',
+            'string' => 'string',
+            'bool' => 'boolean',
+            'array' => 'array',
+            'object' => 'object',
+            'null' => 'NULL'
+        ];
+
+        return isset($typeMap[$expectedType]) && $typeMap[$expectedType] === $actualType;
     }
 }
