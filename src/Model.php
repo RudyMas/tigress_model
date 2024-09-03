@@ -26,11 +26,13 @@ class Model
     private array $types = [];
 
     /**
-     * Model constructor.
+     * Get the version of the Model
+     *
+     * @return string
      */
-    public function __construct()
+    public static function version(): string
     {
-        define('TIGRESS_MODEL_VERSION', '1.0.0');
+        return '1.0.0';
     }
 
     /**
