@@ -3,6 +3,7 @@
 namespace Tigress;
 
 use Exception;
+use Iterator;
 
 /**
  * Class Model (PHP version 8.3)
@@ -10,11 +11,11 @@ use Exception;
  * @author Rudy Mas <rudy.mas@rudymas.be>
  * @copyright 2024, rudymas.be. (http://www.rudymas.be/)
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License, version 3 (GPL-3.0)
- * @version 1.1.0
- * @lastmodified 2024-09-02
+ * @version 1.2.0
+ * @lastmodified 2024-09-05
  * @package Tigress\Model
  */
-class Model
+class Model implements Iterator
 {
     /**
      * Array of all the properties of the model (data)
@@ -29,13 +30,19 @@ class Model
     private array $types = [];
 
     /**
+     * Position of the iterator
+     * @var int
+     */
+    private int $position = 0;
+
+    /**
      * Get the version of the Model
      *
      * @return string
      */
     public static function version(): string
     {
-        return '1.1.0';
+        return '1.2.0';
     }
 
     /**
@@ -149,5 +156,58 @@ class Model
             return $this->types[$property];
         }
         throw new Exception("Property $property does not exist.");
+    }
+
+    /**
+     * Return the current element
+     *
+     * @return mixed
+     */
+    public function current(): mixed
+    {
+        $keys = array_keys($this->properties);
+        return $this->properties[$keys[$this->position]];
+    }
+
+    /**
+     * Move forward to next element
+     *
+     * @return void
+     */
+    public function next(): void
+    {
+        ++$this->position;
+    }
+
+    /**
+     * Return the key of the current element
+     *
+     * @return mixed
+     */
+    public function key(): mixed
+    {
+        $keys = array_keys($this->properties);
+        return $keys[$this->position];
+    }
+
+    /**
+     * Checks if current position is valid
+     *
+     * @return bool
+     */
+    public function valid(): bool
+    {
+        $keys = array_keys($this->properties);
+        return isset($keys[$this->position]);
+    }
+
+    /**
+     * Rewind the Iterator to the first element
+     *
+     * @return void
+     */
+    public function rewind(): void
+    {
+        $this->position = 0;
     }
 }
