@@ -11,7 +11,7 @@ use Iterator;
  * @author Rudy Mas <rudy.mas@rudymas.be>
  * @copyright 2024, rudymas.be. (http://www.rudymas.be/)
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License, version 3 (GPL-3.0)
- * @version 1.2.0
+ * @version 1.3.0
  * @lastmodified 2024-09-05
  * @package Tigress\Model
  */
@@ -42,7 +42,7 @@ class Model implements Iterator
      */
     public static function version(): string
     {
-        return '1.2.0';
+        return '1.3.0';
     }
 
     /**
