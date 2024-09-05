@@ -10,7 +10,7 @@ use Exception;
  * @author Rudy Mas <rudy.mas@rudymas.be>
  * @copyright 2024, rudymas.be. (http://www.rudymas.be/)
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License, version 3 (GPL-3.0)
- * @version 1.0.0
+ * @version 1.1.0
  * @lastmodified 2024-09-02
  * @package Tigress\Model
  */
@@ -35,16 +35,41 @@ class Model
      */
     public static function version(): string
     {
-        return '1.0.0';
+        return '1.1.0';
+    }
+
+    /**
+     * Model constructor.
+     *
+     * @param object|null $data
+     */
+    public function __construct(object $data = null)
+    {
+        if ($data !== null) {
+            $this->update($data);
+        }
+    }
+
+    /**
+     * Update the model's properties
+     *
+     * @param object $data
+     * @return void
+     */
+    public function update(object $data): void
+    {
+        foreach ($data as $property => $value) {
+            $this->$property = $value;
+        }
     }
 
     /**
      * Initiate the model's properties/types
      *
-     * @param $data
+     * @param array $data
      * @return void
      */
-    public function initiateModel($data): void
+    public function initiateModel(array $data): void
     {
         foreach ($data as $property => $field) {
             $this->properties[$property] = $field['value'];
