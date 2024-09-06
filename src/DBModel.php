@@ -10,8 +10,8 @@ use Exception;
  * @author Rudy Mas <rudy.mas@rudymas.be>
  * @copyright 2024, rudymas.be. (http://www.rudymas.be/)
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License, version 3 (GPL-3.0)
- * @version 1.0.0
- * @lastmodified 2024-09-05
+ * @version 1.1.0
+ * @lastmodified 2024-09-06
  * @package Tigress\Model
  */
 class DBModel extends Model
@@ -23,13 +23,19 @@ class DBModel extends Model
     private Database $db;
 
     /**
+     * Table name
+     * @var string
+     */
+    private string $table;
+
+    /**
      * Get the version of the Model
      *
      * @return string
      */
     public static function version(): string
     {
-        return '1.0.0';
+        return '1.0.2';
     }
 
     /**
@@ -40,6 +46,7 @@ class DBModel extends Model
     public function __construct(Database $db, string $table, object $data = null)
     {
         $this->db = $db;
+        $this->table = $table;
         $this->createModel();
         parent::__construct($data);
     }
@@ -52,20 +59,20 @@ class DBModel extends Model
         $data = [];
         if ($this->db->getRows() > 0) {
             foreach ($this->db->fetchAll() as $row) {
-                $rowField = $row['Field'];
-                $rowType = $row['Type'];
-                $rowNull = $row['Null'];
-                $rowDefault = $row['Default'];
+                $rowField = $row->Field;
+                $rowType = $row->Type;
+                $rowNull = $row->Null;
+                $rowDefault = $row->Default;
 
                 $type = $this->getFieldType($rowType);
 
-                if ($rowNull = 'YES') {
-                    $value = null;
+                if ($rowNull === 'YES') {
+                    $value = 'null';
                 } else {
-                    if ($rowDefault !== null) {
+                    if (!empty($rowDefault)) {
                         $value = $rowDefault;
                     } else {
-                        if ($type === 'int') {
+                        if ($type === 'integer') {
                             $value = 0;
                         } elseif ($type === 'float') {
                             $value = 0.0;
@@ -87,10 +94,6 @@ class DBModel extends Model
                 $data = array_merge($data, $array);
             }
         }
-        print('<pre>');
-        print_r($data);
-        print('</pre>');
-        exit;
         $this->initiateModel($data);
     }
 
@@ -103,15 +106,15 @@ class DBModel extends Model
     private function getFieldType(mixed $type): string
     {
         if (preg_match('/int|tinyint|smallint|mediumint|bigint/', $type)) {
-            return 'int';
+            return 'integer';
         } elseif (preg_match('/float|double|decimal/', $type)) {
             return 'float';
         } elseif (preg_match('/varchar|text|char|blob/', $type)) {
             return 'string';
         } elseif (preg_match('/date|time|datetime|timestamp/', $type)) {
-            return 'datetime';
+            return 'string';
         } else {
-            return 'string'; // Default to string if type is unrecognized
+            return 'string';
         }
     }
 }
