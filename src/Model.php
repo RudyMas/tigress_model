@@ -11,8 +11,8 @@ use Iterator;
  * @author Rudy Mas <rudy.mas@rudymas.be>
  * @copyright 2024, rudymas.be. (http://www.rudymas.be/)
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License, version 3 (GPL-3.0)
- * @version 1.3.1
- * @lastmodified 2024-09-06
+ * @version 1.4.0
+ * @lastmodified 2024-10-04
  * @package Tigress\Model
  */
 class Model implements Iterator
@@ -42,7 +42,7 @@ class Model implements Iterator
      */
     public static function version(): string
     {
-        return '1.3.1';
+        return '1.4.0';
     }
 
     /**
@@ -129,6 +129,16 @@ class Model implements Iterator
      * @return array
      */
     public function getProperties(): array
+    {
+        return $this->properties;
+    }
+
+    /**
+     * Get the data (properties) of the model
+     *
+     * @return array
+     */
+    public function read(): array
     {
         return $this->properties;
     }
