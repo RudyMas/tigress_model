@@ -33,7 +33,7 @@ class DBModel extends Model
      */
     public static function version(): string
     {
-        return '1.0.2';
+        return '1.1.0';
     }
 
     /**
