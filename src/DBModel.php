@@ -2,8 +2,6 @@
 
 namespace Tigress;
 
-use Exception;
-
 /**
  * Class DBModel (PHP version 8.3)
  *
