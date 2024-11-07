@@ -11,7 +11,7 @@ use Iterator;
  * @author Rudy Mas <rudy.mas@rudymas.be>
  * @copyright 2024, rudymas.be. (http://www.rudymas.be/)
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License, version 3 (GPL-3.0)
- * @version 1.4.0
+ * @version 1.4.1
  * @lastmodified 2024-10-04
  * @package Tigress\Model
  */
@@ -42,7 +42,7 @@ class Model implements Iterator
      */
     public static function version(): string
     {
-        return '1.4.0';
+        return '1.4.1';
     }
 
     /**
@@ -98,7 +98,7 @@ class Model implements Iterator
             $expectedType = $this->types[$property];
             $actualType = gettype($value);
 
-            if ($actualType !== 'NULL' && $expectedType !== $actualType) {
+            if (($value !== '' && $actualType !== 'NULL') && $expectedType !== $actualType) {
                 throw new Exception("Type mismatch for property $property. Expected $expectedType, got $actualType.");
             }
 
