@@ -11,8 +11,8 @@ use Iterator;
  * @author Rudy Mas <rudy.mas@rudymas.be>
  * @copyright 2024, rudymas.be. (http://www.rudymas.be/)
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License, version 3 (GPL-3.0)
- * @version 1.4.1
- * @lastmodified 2024-10-04
+ * @version 1.4.2
+ * @lastmodified 2024-11-08
  * @package Tigress\Model
  */
 class Model implements Iterator
@@ -42,7 +42,7 @@ class Model implements Iterator
      */
     public static function version(): string
     {
-        return '1.4.1';
+        return '1.4.2';
     }
 
     /**
@@ -66,8 +66,36 @@ class Model implements Iterator
     public function update(object $data): void
     {
         foreach ($data as $property => $value) {
-            $this->$property = $value;
+            if (array_key_exists($property, $this->properties)) {
+            	$this->properties[$property] = $value;
+            }
         }
+    }
+
+    /**
+     * Update the model's properties from a POST request
+     *
+     * @param array $data
+     * @return void
+     */
+    public function updateFromPost(array $data): void
+    {
+        foreach ($data as $property => $value) {
+            if (array_key_exists($property, $this->properties)) {
+            	$this->properties[$property] = $value;
+            }
+        }
+    }
+
+    /**
+     * Check if the property is set
+     *
+     * @param string $property
+     * @return bool
+     */
+    public function isset(string $property): bool
+    {
+        return array_key_exists($property, $this->properties);
     }
 
     /**
