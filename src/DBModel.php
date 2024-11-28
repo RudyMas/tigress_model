@@ -3,13 +3,12 @@
 namespace Tigress;
 
 /**
- * Class DBModel (PHP version 8.3)
+ * Class DBModel (PHP version 8.4)
  *
  * @author Rudy Mas <rudy.mas@rudymas.be>
  * @copyright 2024, rudymas.be. (http://www.rudymas.be/)
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License, version 3 (GPL-3.0)
- * @version 1.1.0
- * @lastmodified 2024-09-06
+ * @version 2024.11.28.0
  * @package Tigress\Model
  */
 class DBModel extends Model
@@ -33,15 +32,17 @@ class DBModel extends Model
      */
     public static function version(): string
     {
-        return '1.1.0';
+        return '2024.11.28.0';
     }
 
     /**
      * Model constructor.
      *
+     * @param Database $db
+     * @param string $table
      * @param object|null $data
      */
-    public function __construct(Database $db, string $table, object $data = null)
+    public function __construct(Database $db, string $table, ?object $data = null)
     {
         $this->db = $db;
         $this->table = $table;
