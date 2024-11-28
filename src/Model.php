@@ -41,7 +41,7 @@ class Model implements Iterator
      */
     public static function version(): string
     {
-        return '2024.11.28.0';
+        return '2024.11.28';
     }
 
     /**
