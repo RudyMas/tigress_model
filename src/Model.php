@@ -6,13 +6,12 @@ use Exception;
 use Iterator;
 
 /**
- * Class Model (PHP version 8.3)
+ * Class Model (PHP version 8.4)
  *
  * @author Rudy Mas <rudy.mas@rudymas.be>
  * @copyright 2024, rudymas.be. (http://www.rudymas.be/)
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License, version 3 (GPL-3.0)
- * @version 1.4.2
- * @lastmodified 2024-11-08
+ * @version 2024.11.28.0
  * @package Tigress\Model
  */
 class Model implements Iterator
@@ -42,7 +41,7 @@ class Model implements Iterator
      */
     public static function version(): string
     {
-        return '1.4.2';
+        return '2024.11.28.0';
     }
 
     /**
@@ -50,7 +49,7 @@ class Model implements Iterator
      *
      * @param object|null $data
      */
-    public function __construct(object $data = null)
+    public function __construct(?object $data = null)
     {
         if ($data !== null) {
             $this->update($data);
