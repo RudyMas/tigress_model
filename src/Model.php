@@ -11,7 +11,7 @@ use Iterator;
  * @author Rudy Mas <rudy.mas@rudymas.be>
  * @copyright 2024, rudymas.be. (http://www.rudymas.be/)
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License, version 3 (GPL-3.0)
- * @version 2024.11.28.0
+ * @version 2024.12.18.0
  * @package Tigress\Model
  */
 class Model implements Iterator
@@ -41,7 +41,7 @@ class Model implements Iterator
      */
     public static function version(): string
     {
-        return '2024.11.28';
+        return '2024.12.18';
     }
 
     /**
@@ -148,6 +148,17 @@ class Model implements Iterator
             return $this->properties[$property];
         }
         throw new Exception("Property $property does not exist.");
+    }
+
+    /**
+     * Check if the property is set
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function __isset(string $name): bool
+    {
+        return isset($this->properties[$name]);
     }
 
     /**
