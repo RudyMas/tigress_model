@@ -9,9 +9,9 @@ use Iterator;
  * Class Model (PHP version 8.4)
  *
  * @author Rudy Mas <rudy.mas@rudymas.be>
- * @copyright 2024, rudymas.be. (http://www.rudymas.be/)
+ * @copyright 2024-2025, rudymas.be. (http://www.rudymas.be/)
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License, version 3 (GPL-3.0)
- * @version 2024.12.18.0
+ * @version 2025.01.06.0
  * @package Tigress\Model
  */
 class Model implements Iterator
@@ -41,7 +41,7 @@ class Model implements Iterator
      */
     public static function version(): string
     {
-        return '2024.12.18';
+        return '2025.01.06';
     }
 
     /**
@@ -167,16 +167,6 @@ class Model implements Iterator
      * @return array
      */
     public function getProperties(): array
-    {
-        return $this->properties;
-    }
-
-    /**
-     * Get the data (properties) of the model
-     *
-     * @return array
-     */
-    public function read(): array
     {
         return $this->properties;
     }
