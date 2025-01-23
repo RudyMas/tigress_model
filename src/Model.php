@@ -11,11 +11,17 @@ use Iterator;
  * @author Rudy Mas <rudy.mas@rudymas.be>
  * @copyright 2024-2025, rudymas.be. (http://www.rudymas.be/)
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License, version 3 (GPL-3.0)
- * @version 2025.01.06.0
+ * @version 2025.01.23.0
  * @package Tigress\Model
  */
 class Model implements Iterator
 {
+    /**
+     * Position of the iterator
+     * @var int
+     */
+    private int $position = 0;
+
     /**
      * Array of all the properties of the model (data)
      * @var array
@@ -29,19 +35,13 @@ class Model implements Iterator
     private array $types = [];
 
     /**
-     * Position of the iterator
-     * @var int
-     */
-    private int $position = 0;
-
-    /**
      * Get the version of the Model
      *
      * @return string
      */
     public static function version(): string
     {
-        return '2025.01.06';
+        return '2025.01.23';
     }
 
     /**
@@ -53,85 +53,6 @@ class Model implements Iterator
     {
         if ($data !== null) {
             $this->update($data);
-        }
-    }
-
-    /**
-     * Update the model's properties
-     *
-     * @param object $data
-     * @return void
-     */
-    public function update(object $data): void
-    {
-        foreach ($data as $property => $value) {
-            if (array_key_exists($property, $this->properties)) {
-            	$this->properties[$property] = $value;
-            }
-        }
-    }
-
-    /**
-     * Update the model's properties from a POST request
-     *
-     * @param array $data
-     * @return void
-     */
-    public function updateFromPost(array $data): void
-    {
-        foreach ($data as $property => $value) {
-            if (array_key_exists($property, $this->properties)) {
-            	$this->properties[$property] = $value;
-            }
-        }
-    }
-
-    /**
-     * Check if the property is set
-     *
-     * @param string $property
-     * @return bool
-     */
-    public function isset(string $property): bool
-    {
-        return array_key_exists($property, $this->properties);
-    }
-
-    /**
-     * Initiate the model's properties/types
-     *
-     * @param array $data
-     * @return void
-     */
-    public function initiateModel(array $data): void
-    {
-        foreach ($data as $property => $field) {
-            $this->properties[$property] = $field['value'];
-            $this->types[$property] = $field['type'];
-        }
-    }
-
-    /**
-     * Set the data for the model's properties
-     *
-     * @param string $property
-     * @param mixed $value
-     * @return void
-     * @throws Exception
-     */
-    public function __set(string $property, mixed $value): void
-    {
-        if (array_key_exists($property, $this->properties)) {
-            $expectedType = $this->types[$property];
-            $actualType = gettype($value);
-
-            if (($value !== '' && $actualType !== 'NULL') && $expectedType !== $actualType) {
-                throw new Exception("Type mismatch for property $property. Expected $expectedType, got $actualType.");
-            }
-
-            $this->properties[$property] = $value;
-        } else {
-            throw new Exception("Property $property does not exist.");
         }
     }
 
@@ -162,6 +83,30 @@ class Model implements Iterator
     }
 
     /**
+     * Set the data for the model's properties
+     *
+     * @param string $property
+     * @param mixed $value
+     * @return void
+     * @throws Exception
+     */
+    public function __set(string $property, mixed $value): void
+    {
+        if (array_key_exists($property, $this->properties)) {
+            $expectedType = $this->types[$property];
+            $actualType = gettype($value);
+
+            if (($value !== '' && $actualType !== 'NULL') && $expectedType !== $actualType) {
+                throw new Exception("Type mismatch for property $property. Expected $expectedType, got $actualType.");
+            }
+
+            $this->properties[$property] = $value;
+        } else {
+            throw new Exception("Property $property does not exist.");
+        }
+    }
+
+    /**
      * Get the properties
      *
      * @return array
@@ -169,16 +114,6 @@ class Model implements Iterator
     public function getProperties(): array
     {
         return $this->properties;
-    }
-
-    /**
-     * Get the types of the properties
-     *
-     * @return array
-     */
-    public function getTypes(): array
-    {
-        return $this->types;
     }
 
     /**
@@ -197,6 +132,94 @@ class Model implements Iterator
     }
 
     /**
+     * Get the types of the properties
+     *
+     * @return array
+     */
+    public function getTypes(): array
+    {
+        return $this->types;
+    }
+
+    /**
+     * Initiate the model's properties/types
+     *
+     * @param array $data
+     * @return void
+     */
+    public function initiateModel(array $data): void
+    {
+        foreach ($data as $property => $field) {
+            $this->properties[$property] = $field['value'];
+            $this->types[$property] = $field['type'];
+        }
+    }
+
+    /**
+     * Check if the property is set
+     *
+     * @param string $property
+     * @return bool
+     */
+    public function isset(string $property): bool
+    {
+        return array_key_exists($property, $this->properties);
+    }
+
+    /**
+     * Update the model's properties
+     *
+     * @param object $data
+     * @return void
+     */
+    public function update(object $data): void
+    {
+        foreach ($data as $property => $value) {
+            if (array_key_exists($property, $this->properties)) {
+            	$this->properties[$property] = $value;
+            }
+        }
+    }
+
+    /**
+     * Update the model's properties by an array
+     *
+     * @param array $data
+     * @return void
+     */
+    public function updateByArray(array $data): void
+    {
+        foreach ($data as $property => $value) {
+            if (array_key_exists($property, $this->properties)) {
+            	$this->properties[$property] = $value;
+            }
+        }
+    }
+
+    /**
+     * Update the model's properties by a POST request
+     *
+     * @param array $data
+     * @return void
+     */
+    public function updateByPost(array $data): void
+    {
+        $this->updateByArray($data);
+    }
+
+    /**
+     * Update the model's properties from a POST request
+     *
+     * @param array $data
+     * @return void
+     * @deprecated since 2025.01.23 - Use updateByPost instead - To be removed after version 2025.03.31
+     */
+    public function updateFromPost(array $data): void
+    {
+        $this->updateByArray($data);
+    }
+
+    /**
      * Return the current element
      *
      * @return mixed
@@ -205,16 +228,6 @@ class Model implements Iterator
     {
         $keys = array_keys($this->properties);
         return $this->properties[$keys[$this->position]];
-    }
-
-    /**
-     * Move forward to next element
-     *
-     * @return void
-     */
-    public function next(): void
-    {
-        ++$this->position;
     }
 
     /**
@@ -229,14 +242,13 @@ class Model implements Iterator
     }
 
     /**
-     * Checks if current position is valid
+     * Move forward to next element
      *
-     * @return bool
+     * @return void
      */
-    public function valid(): bool
+    public function next(): void
     {
-        $keys = array_keys($this->properties);
-        return isset($keys[$this->position]);
+        ++$this->position;
     }
 
     /**
@@ -247,5 +259,16 @@ class Model implements Iterator
     public function rewind(): void
     {
         $this->position = 0;
+    }
+
+    /**
+     * Checks if current position is valid
+     *
+     * @return bool
+     */
+    public function valid(): bool
+    {
+        $keys = array_keys($this->properties);
+        return isset($keys[$this->position]);
     }
 }
