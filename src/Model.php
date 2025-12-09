@@ -6,12 +6,12 @@ use Exception;
 use Iterator;
 
 /**
- * Class Model (PHP version 8.4)
+ * Class Model (PHP version 8.5)
  *
  * @author Rudy Mas <rudy.mas@rudymas.be>
  * @copyright 2024-2025, rudymas.be. (http://www.rudymas.be/)
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License, version 3 (GPL-3.0)
- * @version 2025.02.04.0
+ * @version 2025.12.09.0
  * @package Tigress\Model
  */
 class Model implements Iterator
@@ -41,7 +41,7 @@ class Model implements Iterator
      */
     public static function version(): string
     {
-        return '2025.02.04';
+        return '2025.12.09';
     }
 
     /**
