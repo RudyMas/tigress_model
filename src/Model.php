@@ -9,9 +9,9 @@ use Iterator;
  * Class Model (PHP version 8.5)
  *
  * @author Rudy Mas <rudy.mas@rudymas.be>
- * @copyright 2024-2025, rudymas.be. (http://www.rudymas.be/)
+ * @copyright 2024-2026, rudymas.be. (http://www.rudymas.be/)
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License, version 3 (GPL-3.0)
- * @version 2025.12.09.0
+ * @version 2026.01.22.0
  * @package Tigress\Model
  */
 class Model implements Iterator
@@ -41,7 +41,7 @@ class Model implements Iterator
      */
     public static function version(): string
     {
-        return '2025.12.09';
+        return '2026.01.22';
     }
 
     /**
@@ -107,6 +107,17 @@ class Model implements Iterator
     }
 
     /**
+     * Return the current element
+     *
+     * @return mixed
+     */
+    public function current(): mixed
+    {
+        $keys = array_keys($this->properties);
+        return $this->properties[$keys[$this->position]];
+    }
+
+    /**
      * Get the properties
      *
      * @return array
@@ -142,6 +153,17 @@ class Model implements Iterator
     }
 
     /**
+     * Check if the model has a certain property
+     *
+     * @param string $property
+     * @return bool
+     */
+    public function has(string $property): bool
+    {
+        return array_key_exists($property, $this->properties);
+    }
+
+    /**
      * Initiate the model's properties/types
      *
      * @param array $data
@@ -164,6 +186,37 @@ class Model implements Iterator
     public function isset(string $property): bool
     {
         return array_key_exists($property, $this->properties);
+    }
+
+    /**
+     * Return the key of the current element
+     *
+     * @return mixed
+     */
+    public function key(): mixed
+    {
+        $keys = array_keys($this->properties);
+        return $keys[$this->position];
+    }
+
+    /**
+     * Move forward to next element
+     *
+     * @return void
+     */
+    public function next(): void
+    {
+        ++$this->position;
+    }
+
+    /**
+     * Rewind the Iterator to the first element
+     *
+     * @return void
+     */
+    public function rewind(): void
+    {
+        $this->position = 0;
     }
 
     /**
@@ -205,60 +258,6 @@ class Model implements Iterator
     public function updateByPost(array $data): void
     {
         $this->updateByArray($data);
-    }
-
-    /**
-     * Update the model's properties from a POST request
-     *
-     * @param array $data
-     * @return void
-     * @deprecated since 2025.01.23 - Use updateByPost instead - To be removed after version 2025.03.31
-     */
-    public function updateFromPost(array $data): void
-    {
-        $this->updateByArray($data);
-    }
-
-    /**
-     * Return the current element
-     *
-     * @return mixed
-     */
-    public function current(): mixed
-    {
-        $keys = array_keys($this->properties);
-        return $this->properties[$keys[$this->position]];
-    }
-
-    /**
-     * Return the key of the current element
-     *
-     * @return mixed
-     */
-    public function key(): mixed
-    {
-        $keys = array_keys($this->properties);
-        return $keys[$this->position];
-    }
-
-    /**
-     * Move forward to next element
-     *
-     * @return void
-     */
-    public function next(): void
-    {
-        ++$this->position;
-    }
-
-    /**
-     * Rewind the Iterator to the first element
-     *
-     * @return void
-     */
-    public function rewind(): void
-    {
-        $this->position = 0;
     }
 
     /**
