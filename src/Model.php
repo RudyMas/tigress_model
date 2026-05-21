@@ -96,6 +96,10 @@ class Model implements Iterator
             $expectedType = $this->types[$property];
             $actualType = gettype($value);
 
+            if ($expectedType === 'float' && $actualType === 'double') {
+                $actualType = 'float';
+            }
+
             if (($value !== '' && $actualType !== 'NULL') && $expectedType !== $actualType) {
                 throw new Exception("Type mismatch for property $property ($value). Expected $expectedType, got $actualType.");
             }
@@ -257,6 +261,12 @@ class Model implements Iterator
      */
     public function updateByPost(array $data): void
     {
+        foreach ($data as $property => &$value) {
+            if (array_key_exists($property, $this->properties) && is_string($value)) {
+                $value = trim($value);
+            }
+        }
+        unset($value);
         $this->updateByArray($data);
     }
 

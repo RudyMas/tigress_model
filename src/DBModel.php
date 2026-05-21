@@ -52,7 +52,7 @@ class DBModel extends Model
 
     private function createModel(): void
     {
-        $sql = "DESCRIBE " . $this->table;
+        $sql = "DESCRIBE `" . $this->table . "`";
         $this->db->query($sql);
 
         $data = [];
@@ -66,7 +66,7 @@ class DBModel extends Model
                 $type = $this->getFieldType($rowType);
 
                 if ($rowNull === 'YES') {
-                    $value = 'null';
+                    $value = null;
                 } else {
                     if (!empty($rowDefault)) {
                         $value = $rowDefault;
