@@ -231,25 +231,7 @@ If your custom model needs additional computed properties or methods, add them a
 
 ---
 
-## 4. Historical Issues (All Fixed)
-
-The following issues were identified in the original code review and have been fixed:
-
-1. ~~**Float type mismatch (`src/Model.php:96-100`):** `__set()` uses `gettype($value)` for validation. PHP's `gettype()` returns `"double"` for float values, but the library stores types as `"float"`. Any assignment like `$model->price = 1.99` via `__set` would throw a type mismatch exception.~~ **Fixed:** `__set()` now normalizes `"double"` to `"float"` before comparison.
-
-2. ~~**Nullable default is string `'null'` (`src/DBModel.php:69`):** When a column is nullable (`Null = 'YES'`), the default value was set to the *string* `'null'`, not PHP's `null`.~~ **Fixed:** Nullable columns now default to PHP `null`.
-
-3. **`update()` skips type validation (`src/Model.php:228-235`):** Unlike `__set()`, the batch update methods write directly to `$this->properties` without checking types. Type consistency relies on the caller. *(Intentionally kept as-is — batch updates assume trusted input.)*
-
-4. ~~**Unquoted table name in SQL (`src/DBModel.php:55`):** `"DESCRIBE " . $this->table` directly interpolated the table name without backtick quoting or prepared statements.~~ **Fixed:** Table name is now wrapped in backticks: `` DESCRIBE `tablename` ``.
-
-5. **`DefaultModel` serves no runtime purpose:** `src/models/DefaultModel.php` is an empty extension of `Model` in the `Model\` namespace. It acts as a usage example but offers no functionality beyond what `Model` already provides. *(Not changed — kept as documentation example.)*
-
-6. ~~**`updateByPost()` is redundant (`src/Model.php:258-261`):** The method simply delegated to `updateByArray()` with no additional processing.~~ **Fixed:** `updateByPost()` now trims string values that match known properties before delegating to `updateByArray()`.
-
----
-
-## 5. Quick Reference
+## 4. Quick Reference
 
 | Method | Description | Type Validation |
 |---|---|---|
