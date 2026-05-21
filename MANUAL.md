@@ -64,10 +64,9 @@ When a property is set via `$model->property = $value`, `__set()` is invoked whi
 
 ```php
 $model->name = 'Alice';   // OK
+$model->price = 3.14;     // OK (float/double is normalized)
 $model->id = 'abc';       // Throws: Type mismatch for property id (abc). Expected integer, got string.
 ```
-
-> **Known issue:** `gettype()` returns `"double"` for float values in PHP, but the library stores the type as `"float"`. Setting a float property via `$model->price = 3.14` will throw a type mismatch. Always use `initiateModel()`, `update()`, or `updateByArray()` for float properties, which bypass `__set`.
 
 ### Magic Getter
 
@@ -85,7 +84,7 @@ Three methods update multiple properties at once. **None perform type validation
 |---|---|---|
 | `update(object $data)` | Object with public properties | Hydrating from a database row or API response |
 | `updateByArray(array $data)` | Associative array | Hydrating from an array |
-| `updateByPost(array $data)` | Associative array | Alias for `updateByArray()` (intended for `$_POST`) |
+| `updateByPost(array $data)` | Associative array | Hydrating from `$_POST` (trims string values that match known properties) |
 
 Only keys that already exist as model properties are accepted; unknown keys are silently ignored.
 
@@ -164,7 +163,7 @@ On construction, `DBModel` runs `DESCRIBE <tablename>` and maps SQL column types
 | `date`, `time`, `datetime`, `timestamp` | `string` |
 
 Default values are populated:
-- **Nullable columns** (`Null = 'YES'`): value set to the literal **string** `'null'` (not PHP `null` — see known issues).
+- **Nullable columns** (`Null = 'YES'`): value set to PHP `null`.
 - **Non-nullable columns**: uses the database default, or a type-appropriate empty value (`0`, `0.0`, `''`, or `'0000-00-00 00:00:00'` for datetime types).
 
 ### Example
@@ -232,19 +231,21 @@ If your custom model needs additional computed properties or methods, add them a
 
 ---
 
-## 4. Code Review — Notable Issues
+## 4. Historical Issues (All Fixed)
 
-1. **Float type mismatch (`src/Model.php:96-100`):** `__set()` uses `gettype($value)` for validation. PHP's `gettype()` returns `"double"` for float values, but the library stores types as `"float"`. Any assignment like `$model->price = 1.99` via `__set` will throw a type mismatch exception. The `update()`, `updateByArray()`, and `updateByPost()` methods bypass `__set` entirely (no type checking), which is why float values work through those paths.
+The following issues were identified in the original code review and have been fixed:
 
-2. **Nullable default is string `'null'` (`src/DBModel.php:69`):** When a column is nullable (`Null = 'YES'`), the default value is set to the *string* `'null'`, not PHP's `null`. This means `$model->nullableField === 'null'` (string) rather than `$model->nullableField === null`. This is likely unintentional.
+1. ~~**Float type mismatch (`src/Model.php:96-100`):** `__set()` uses `gettype($value)` for validation. PHP's `gettype()` returns `"double"` for float values, but the library stores types as `"float"`. Any assignment like `$model->price = 1.99` via `__set` would throw a type mismatch exception.~~ **Fixed:** `__set()` now normalizes `"double"` to `"float"` before comparison.
 
-3. **`update()` skips type validation (`src/Model.php:228-235`):** Unlike `__set()`, the batch update methods write directly to `$this->properties` without checking types. Type consistency relies on the caller.
+2. ~~**Nullable default is string `'null'` (`src/DBModel.php:69`):** When a column is nullable (`Null = 'YES'`), the default value was set to the *string* `'null'`, not PHP's `null`.~~ **Fixed:** Nullable columns now default to PHP `null`.
 
-4. **Unquoted table name in SQL (`src/DBModel.php:55`):** `"DESCRIBE " . $this->table` directly interpolates the table name without backtick quoting or prepared statements. If the table name comes from untrusted input, this is a SQL injection vector. Table names should be wrapped in backticks and validated.
+3. **`update()` skips type validation (`src/Model.php:228-235`):** Unlike `__set()`, the batch update methods write directly to `$this->properties` without checking types. Type consistency relies on the caller. *(Intentionally kept as-is — batch updates assume trusted input.)*
 
-5. **`DefaultModel` serves no runtime purpose:** `src/models/DefaultModel.php` is an empty extension of `Model` in the `Model\` namespace. It acts as a usage example but offers no functionality beyond what `Model` already provides.
+4. ~~**Unquoted table name in SQL (`src/DBModel.php:55`):** `"DESCRIBE " . $this->table` directly interpolated the table name without backtick quoting or prepared statements.~~ **Fixed:** Table name is now wrapped in backticks: `` DESCRIBE `tablename` ``.
 
-6. **`updateByPost()` is redundant (`src/Model.php:258-261`):** The method simply delegates to `updateByArray()` with no additional processing (no filtering, no sanitization). Consider adding CSRF token validation, input trimming, or type coercion if this is meant for HTTP request handling.
+5. **`DefaultModel` serves no runtime purpose:** `src/models/DefaultModel.php` is an empty extension of `Model` in the `Model\` namespace. It acts as a usage example but offers no functionality beyond what `Model` already provides. *(Not changed — kept as documentation example.)*
+
+6. ~~**`updateByPost()` is redundant (`src/Model.php:258-261`):** The method simply delegated to `updateByArray()` with no additional processing.~~ **Fixed:** `updateByPost()` now trims string values that match known properties before delegating to `updateByArray()`.
 
 ---
 
@@ -254,10 +255,10 @@ If your custom model needs additional computed properties or methods, add them a
 |---|---|---|
 | `initiateModel(array $data)` | Define properties and types | No (sets raw arrays) |
 | `__get(string $property)` | Get property value | N/A |
-| `__set(string $property, $value)` | Set property value | Yes (but broken for `float`) |
+| `__set(string $property, $value)` | Set property value | Yes (float/double normalized) |
 | `update(object $data)` | Batch update from object | No |
 | `updateByArray(array $data)` | Batch update from array | No |
-| `updateByPost(array $data)` | Batch update for POST data | No |
+| `updateByPost(array $data)` | Batch update for POST data (trims strings) | No |
 | `has(string $property)` | Check property exists | N/A |
 | `isset(string $property)` | Check property key is set | N/A |
 | `getProperties()` | Get all property values | N/A |
